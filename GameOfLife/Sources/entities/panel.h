@@ -15,5 +15,5 @@ public:
 
 	void OnWindowResize(float x, float y, float width, float height);
 	void Update();
-	void Draw();
+	void Draw() const;
 };

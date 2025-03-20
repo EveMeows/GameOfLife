@@ -24,10 +24,10 @@
     <ClCompile Include="Sources\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Entities\cells.cpp">
+    <ClCompile Include="Sources\entities\cells.cpp">
       <Filter>Source Files\Entities</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Entities\panel.cpp">
+    <ClCompile Include="Sources\entities\panel.cpp">
       <Filter>Source Files\Entities</Filter>
     </ClCompile>
     <ClCompile Include="Sources\game_data.h">
@@ -38,13 +38,13 @@
     <ClInclude Include="Sources\globals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Entities\cells.h">
+    <ClInclude Include="Sources\entities\cells.h">
       <Filter>Header Files\Entities</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Entities\panel.h">
+    <ClInclude Include="Sources\entities\panel.h">
       <Filter>Header Files\Entities</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Entities\cell.h">
+    <ClInclude Include="Sources\entities\cell.h">
       <Filter>Header Files\Entities</Filter>
     </ClInclude>
   </ItemGroup>

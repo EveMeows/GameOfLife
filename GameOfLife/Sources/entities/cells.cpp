@@ -22,7 +22,6 @@ void Cells::populate()
 	{
 		for (int y = 0; y < MAP_HEIGHT; y++)
 		{
-			// This SURE IS FUCKING PERFORMANT....
 			for (Vector2 position : this->alive)
 			{
 				if (x == position.x && y == position.y)
@@ -146,7 +145,7 @@ int Cells::get_neighbour_count(int x, int y)
 
 void Cells::advance_generation()
 {
-	int temp_cells[MAP_WIDTH][MAP_HEIGHT] = {};
+	uint8_t temp_cells[MAP_WIDTH][MAP_HEIGHT] = {};
 
 	for (int x = 0; x < MAP_WIDTH; x++)
 	{

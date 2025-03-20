@@ -8,8 +8,8 @@
 #include <raymath.h>
 
 #include "globals.h"
-#include "Entities/cells.h"
-#include "Entities/panel.h"
+#include "entities/cells.h"
+#include "entities/panel.h"
 
 #include "game_data.h"
 
@@ -24,12 +24,8 @@ static void draw_grid()
 		DrawLine(CELL_SIZE * i, 0, CELL_SIZE * i, MAP_HEIGHT_PX, GRID_COLOUR);
 }
 
-int main(void)
+static Camera2D make_camera()
 {
-	SetConfigFlags(FLAG_WINDOW_RESIZABLE);
-	InitWindow(800, 600, "Game Of Life");
-	SetWindowMinSize(300, 200);
-
 	Camera2D game_camera = {};
 
 	game_camera.target = Vector2((float)MAP_WIDTH_PX / 2, (float)MAP_HEIGHT_PX / 2);
@@ -37,10 +33,37 @@ int main(void)
 	game_camera.rotation = 0.0f;
 	game_camera.zoom = 2.0f;
 
+	return game_camera;
+}
+
+static void handle_camera(Camera2D& game_camera)
+{
+	// Handle camera zoom
+	if (GetMouseWheelMove() != 0)
+	{
+		game_camera.zoom += (float)GetMouseWheelMove() * 0.05f;
+
+		if (game_camera.zoom > MAX_ZOOM) game_camera.zoom = MAX_ZOOM;
+		else if (game_camera.zoom < MIN_ZOOM) game_camera.zoom = MIN_ZOOM;
+	}
+
+	// Camera dragging
+	if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
+		game_camera.target = Vector2Subtract(game_camera.target, Vector2Scale(GetMouseDelta(), 1.0f / game_camera.zoom));
+}
+
+int main(void)
+{
+	SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+	InitWindow(800, 600, "Game Of Life");
+	SetWindowMinSize(300, 200);
+
+	Camera2D game_camera = make_camera();
+
 	Vector2 mouse_screen = GetScreenToWorld2D(GetMousePosition(), game_camera);
 	Vector2 previous_mouse = mouse_screen;
 
-	std::unique_ptr<game_data> data = std::make_unique<game_data>();
+	std::shared_ptr<game_data> data = std::make_shared<game_data>();
 	Cells cells = Cells();
 
 	// Default positions
@@ -59,39 +82,27 @@ int main(void)
 
 	Vector2 pause_measurements = MeasureTextEx(font, "PAUSED", 20, 1);
 	Vector2 running_measurements = MeasureTextEx(font, "RUNNING", 20, 1);
-
-	//Vector2 size = GetScreenToWorld2D(Vector2(GetScreenWidth() - 5, GetScreenHeight() - 5), game_camera);
 	KeyBindPanel panel = KeyBindPanel(
 		100, 100,
-
 		GetScreenWidth() - 200, GetScreenHeight() - 200
 	);
 
 	while (!WindowShouldClose())
 	{
-		panel.OnWindowResize(100, 100, GetScreenWidth() - 200, GetScreenHeight() - 200);
+		if (IsWindowResized())
+		{
+			panel.OnWindowResize(100, 100, GetScreenWidth() - 200, GetScreenHeight() - 200);
+
+			// The camera will stay focused on the same point, even though the window is resized.
+			game_camera.offset = Vector2((float)GetScreenWidth() / 2, (float)GetScreenHeight() / 2);
+		}
+
 		Vector2 mouse_screen = GetScreenToWorld2D(GetMousePosition(), game_camera);
 
 		if (IsKeyPressed(KEY_SPACE))
 			data->paused = !data->paused;
 
-		// The camera will stay focused on the same point, even though the window is resized.
-		game_camera.offset = Vector2((float)GetScreenWidth() / 2, (float)GetScreenHeight() / 2);
-
-		// Handle camera zoom
-		if (GetMouseWheelMove() != 0)
-		{
-			game_camera.zoom += (float)GetMouseWheelMove() * 0.05f;
-
-			if (game_camera.zoom > 4.0f)
-				game_camera.zoom = 4.0f;
-			else if (game_camera.zoom < 1.0f)
-				game_camera.zoom = 1.0f;
-		}
-
-		// Camera dragging
-		if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
-			game_camera.target = Vector2Subtract(game_camera.target, Vector2Scale(GetMouseDelta(), 1.0f / game_camera.zoom));
+		handle_camera(game_camera);
 
 		cells.handle(mouse_screen, previous_mouse);
 
@@ -115,25 +126,29 @@ int main(void)
 		panel.Update();
 
 		BeginDrawing();
-		ClearBackground(BLACK);
+		{
+			ClearBackground(BLACK);
 
-		BeginMode2D(game_camera);
-		cells.draw_alive();
+			BeginMode2D(game_camera);
+			{
+				cells.draw_alive();
 
-		if (data->show_grid)
-			draw_grid();
-		EndMode2D();
+				if (data->show_grid)
+					draw_grid();
+			}
+			EndMode2D();
 
-		if (data->paused)
-			DrawText("PAUSED", GetScreenWidth() - pause_measurements.x - 10, 5, 20, RED);
-		else
-			DrawText("RUNNING", GetScreenWidth() - running_measurements.x - 10, 5, 20, GREEN);
+			if (data->paused)
+				DrawText("PAUSED", GetScreenWidth() - pause_measurements.x - 10, 5, 20, RED);
+			else
+				DrawText("RUNNING", GetScreenWidth() - running_measurements.x - 10, 5, 20, GREEN);
 
-		DrawText(cells.message.c_str(), 5, 5, 20, RAYWHITE);
-		DrawText(generation.c_str(), GetScreenWidth() - generation_measurements.x - 18, 21, 20, RAYWHITE);
-		DrawFPS(5, GetScreenHeight() - 20);
+			DrawText(cells.message.c_str(), 5, 5, 20, RAYWHITE);
+			DrawText(generation.c_str(), GetScreenWidth() - generation_measurements.x - 18, 21, 20, RAYWHITE);
+			DrawFPS(5, GetScreenHeight() - 20);
 
-		panel.Draw();
+			panel.Draw();
+		}
 		EndDrawing();
 	}
 

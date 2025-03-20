@@ -38,7 +38,7 @@ void KeyBindPanel::Update()
 	}
 }
 
-void KeyBindPanel::Draw()
+void KeyBindPanel::Draw() const
 {
 	DrawRectangleRec(this->m_size, Fade(BLACK, this->m_opacity));
 	DrawRectangleLinesEx(this->m_size, 3, Fade(GRAY, this->m_opacity));
@@ -49,5 +49,5 @@ void KeyBindPanel::Draw()
 void KeyBindPanel::OnWindowResize(float x, float y, float width, float height)
 {
 	if (!IsWindowResized()) return;
-	this->m_size = Rectangle{ x, y, width, height };
+	this->m_size = Rectangle(x, y, width, height);
 }
