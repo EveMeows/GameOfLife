@@ -42,6 +42,22 @@ static Camera2D make_camera(void)
 	return game_camera;
 }
 
+static void make_cells(std::shared_ptr<game_data> game)
+{
+	game->cells = std::make_shared<Cells>();
+
+	game->cells->alive.clear();
+
+	game->cells->alive.push_back(Vector2(49, 49));
+	game->cells->alive.push_back(Vector2(50, 49));
+	game->cells->alive.push_back(Vector2(50, 50));
+	game->cells->alive.push_back(Vector2(48, 51));
+	game->cells->alive.push_back(Vector2(49, 51));
+	game->cells->alive.push_back(Vector2(50, 51));
+
+	game->cells->populate();
+}
+
 static void handle_camera(Camera2D& game_camera)
 {
 	// Handle camera zoom
@@ -66,6 +82,15 @@ static void handle_keys(std::shared_ptr<game_data> game)
 		{
 			game->show_grid = !game->show_grid;
 		}
+
+		if (IsKeyPressed(KEY_R))
+		{
+			game->generations = 0;
+			game->generation = "Generations: 0";
+			game->paused = true;
+
+			make_cells(game);
+		}
 	}
 }
 
@@ -73,7 +98,7 @@ int main(void)
 {
 	SetConfigFlags(FLAG_WINDOW_RESIZABLE);
 	InitWindow(800, 600, "Game Of Life");
-	SetWindowMinSize(300, 200);
+	SetWindowMinSize(600, 500);
 
 	Camera2D game_camera = make_camera();
 
@@ -81,32 +106,30 @@ int main(void)
 	Vector2 previous_mouse = mouse_screen;
 
 	std::shared_ptr<game_data> data = std::make_shared<game_data>();
-	Cells cells = Cells();
 
 	// Default positions
-	cells.alive.push_back(Vector2(49, 49));
-	cells.alive.push_back(Vector2(50, 49));
-	cells.alive.push_back(Vector2(50, 50));
-	cells.alive.push_back(Vector2(48, 51));
-	cells.alive.push_back(Vector2(49, 51));
-	cells.alive.push_back(Vector2(50, 51));
-
-	cells.populate();
+	make_cells(data);
 
 	Font font = GetFontDefault();
-	std::string generation = "Generations: 0";
-	Vector2 generation_measurements = MeasureTextEx(font, generation.c_str(), 20, 1);
+	data->generation = "Generations: 0";
+	Vector2 generation_measurements = MeasureTextEx(font, data->generation.c_str(), 20, 1);
 
 	Vector2 pause_measurements = MeasureTextEx(font, "PAUSED", 20, 1);
 	Vector2 running_measurements = MeasureTextEx(font, "RUNNING", 20, 1);
 
-	KeyBindPanel panel = KeyBindPanel(100, 100, GetScreenWidth() - 200, GetScreenHeight() - 200);
+	KeyBindPanel panel = KeyBindPanel(100, 100, GetScreenWidth() - 200, GetScreenHeight() - 200, data);
 	panel.push_string("SPACE -> Toggle pause");
 	panel.push_string("CTRL + G -> Toggle grid ");
 	panel.push_string("CTRL + K -> Show keybinds.");
+	panel.push_string("CTRL + R -> Reset cells.");
+	panel.push_string("-------------------------");
+	panel.push_string("Left Click -> Drag camera");
+	panel.push_string("Right Click -> Place cell");
+	panel.push_string("Scroll speed text to adjust.");
 
 	while (!WindowShouldClose())
 	{
+		Vector2 mouse_screen = GetScreenToWorld2D(GetMousePosition(), game_camera);
 		if (IsWindowResized())
 		{
 			panel.OnWindowResize(100, 100, GetScreenWidth() - 200, GetScreenHeight() - 200);
@@ -115,15 +138,12 @@ int main(void)
 			game_camera.offset = Vector2((float)GetScreenWidth() / 2, (float)GetScreenHeight() / 2);
 		}
 
-		Vector2 mouse_screen = GetScreenToWorld2D(GetMousePosition(), game_camera);
-
-		if (IsKeyPressed(KEY_SPACE))
-			data->paused = !data->paused;
+		if (IsKeyPressed(KEY_SPACE)) data->paused = !data->paused;
 
 		handle_keys(data);
-		handle_camera(game_camera);
+		if (!panel.visible()) handle_camera(game_camera);
 
-		cells.handle(mouse_screen, previous_mouse);
+		data->cells->handle(mouse_screen, previous_mouse);
 
 		previous_mouse = mouse_screen;
 
@@ -135,10 +155,10 @@ int main(void)
 				data->timer = 0;
 
 				data->generations++;
-				cells.advance_generation();
+				data->cells->advance_generation();
 
-				generation = std::format("Generations {}", data->generations);
-				generation_measurements = MeasureTextEx(font, generation.c_str(), 20, 1);
+				data->generation = std::format("Generations {}", data->generations);
+				generation_measurements = MeasureTextEx(font, data->generation.c_str(), 20, 1);
 			}
 		}
 
@@ -150,7 +170,7 @@ int main(void)
 
 			BeginMode2D(game_camera);
 			{
-				cells.draw_alive();
+				data->cells->draw_alive();
 
 				if (data->show_grid) draw_grid();
 				else DrawRectangleLines(0, 0, MAP_WIDTH_PX, MAP_HEIGHT_PX, GRID_COLOUR);
@@ -162,8 +182,8 @@ int main(void)
 			else
 				DrawText("RUNNING", GetScreenWidth() - running_measurements.x - 10, 5, 20, GREEN);
 
-			DrawText(cells.message.c_str(), 5, 5, 20, RAYWHITE);
-			DrawText(generation.c_str(), GetScreenWidth() - generation_measurements.x - 18, 21, 20, RAYWHITE);
+			DrawText(data->cells->message.c_str(), 5, 5, 20, RAYWHITE);
+			DrawText(data->generation.c_str(), GetScreenWidth() - generation_measurements.x - 18, 21, 20, RAYWHITE);
 			DrawFPS(5, GetScreenHeight() - 20);
 
 			panel.Draw();
@@ -171,6 +191,7 @@ int main(void)
 		EndDrawing();
 	}
 
+	// Close window
 	CloseWindow();
 
 	return EXIT_SUCCESS;

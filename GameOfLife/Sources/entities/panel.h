@@ -3,13 +3,17 @@
 #include <raylib.h>
 
 #include "item.h"
+#include "../game_data.h"
+
 #include <vector>
+#include <memory>
 
 class KeyBindPanel
 {
 private:
 	Font m_font;
 	Rectangle m_size;
+	Rectangle m_scroller;
 
 	float m_opacity;
 	bool m_enabled;
@@ -21,13 +25,17 @@ private:
 
 	const int BASE_X = 20;
 	const int BASE_Y = 50;
+
+	std::shared_ptr<game_data> m_data;
 public:
 
-	KeyBindPanel(float x, float y, float width, float height);
+	KeyBindPanel(float x, float y, float width, float height, std::shared_ptr<game_data> data);
 
 	void OnWindowResize(float x, float y, float width, float height);
+	
 	void Update();
 	void Draw() const;
 
 	void push_string(std::string name);
+	bool visible() const;
 };
