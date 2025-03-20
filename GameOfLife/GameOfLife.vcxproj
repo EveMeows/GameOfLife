@@ -135,16 +135,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="cells.cpp" />
-    <ClCompile Include="game_data.h" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="panel.cpp" />
+    <ClCompile Include="Sources\Entities\cells.cpp" />
+    <ClCompile Include="Sources\game_data.h" />
+    <ClCompile Include="Sources\main.cpp" />
+    <ClCompile Include="Sources\Entities\panel.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cell.h" />
-    <ClInclude Include="cells.h" />
-    <ClInclude Include="globals.h" />
-    <ClInclude Include="panel.h" />
+    <ClInclude Include="Sources\Entities\cell.h" />
+    <ClInclude Include="Sources\Entities\cells.h" />
+    <ClInclude Include="Sources\globals.h" />
+    <ClInclude Include="Sources\Entities\panel.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

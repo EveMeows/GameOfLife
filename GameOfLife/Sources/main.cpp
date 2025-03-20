@@ -1,4 +1,4 @@
-#include <cmath>
+	#include <cmath>
 #include <cstdio>
 
 #include <memory>
@@ -8,8 +8,8 @@
 #include <raymath.h>
 
 #include "globals.h"
-#include "cells.h"
-#include "panel.h"
+#include "Entities/cells.h"
+#include "Entities/panel.h"
 
 #include "game_data.h"
 
@@ -132,8 +132,6 @@ int main(void)
 		DrawText(cells.message.c_str(), 5, 5, 20, RAYWHITE);
 		DrawText(generation.c_str(), GetScreenWidth() - generation_measurements.x - 18, 21, 20, RAYWHITE);
 		DrawFPS(5, GetScreenHeight() - 20);
-
-
 
 		panel.Draw();
 		EndDrawing();

@@ -21,30 +21,30 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="Sources\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="cells.cpp">
+    <ClCompile Include="Sources\Entities\cells.cpp">
       <Filter>Source Files\Entities</Filter>
     </ClCompile>
-    <ClCompile Include="panel.cpp">
+    <ClCompile Include="Sources\Entities\panel.cpp">
       <Filter>Source Files\Entities</Filter>
     </ClCompile>
-    <ClCompile Include="game_data.h">
+    <ClCompile Include="Sources\game_data.h">
       <Filter>Header Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="globals.h">
+    <ClInclude Include="Sources\globals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="cells.h">
+    <ClInclude Include="Sources\Entities\cells.h">
       <Filter>Header Files\Entities</Filter>
     </ClInclude>
-    <ClInclude Include="panel.h">
+    <ClInclude Include="Sources\Entities\panel.h">
       <Filter>Header Files\Entities</Filter>
     </ClInclude>
-    <ClInclude Include="cell.h">
+    <ClInclude Include="Sources\Entities\cell.h">
       <Filter>Header Files\Entities</Filter>
     </ClInclude>
   </ItemGroup>

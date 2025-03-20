@@ -7,7 +7,7 @@
 #include <memory>
 #include <vector>
 
-#include "globals.h"
+#include "../globals.h"
 #include "cell.h"
 
 class Cells
