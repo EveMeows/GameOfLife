@@ -22,7 +22,10 @@ private:
 	int get_neighbour_count(int x, int y);
 
 	const int neighbor_offsets[8][2] = {
-		{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1} };
+		{-1, -1}, {-1, 0}, {-1, 1}, 
+		{ 0, -1},          { 0, 1}, 
+		{ 1, -1}, { 1, 0}, { 1, 1} 
+	};
 
 public:
 	std::string message = "";

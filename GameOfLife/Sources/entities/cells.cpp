@@ -70,16 +70,16 @@ void Cells::handle(Vector2 current, Vector2 previous)
 		{
 			switch (this->m_active->state)
 			{
-			case DEAD:
-				this->alive.push_back(this->m_active->position);
-				break;
+				case DEAD:
+					this->alive.push_back(this->m_active->position);
+					break;
 
-			case ALIVE:
-				bool success = this->remove_at(this->m_active->position);
-				if (!success)
-					std::cerr << "Could not remove for whatever reason.\n";
+				case ALIVE:
+					bool success = this->remove_at(this->m_active->position);
+					if (!success)
+						std::cerr << "Could not remove for whatever reason.\n";
 
-				break;
+					break;
 			}
 
 			this->populate();
@@ -107,7 +107,7 @@ bool Cells::remove_at(Vector2 pos)
 		this->alive.end(),
 		[pos](const Vector2& other)
 		{
-			return Vector2Equals(pos, other);
+			return pos == other;
 		});
 
 	if (iter != this->alive.end())
@@ -179,7 +179,7 @@ void Cells::advance_generation()
 		{
 			this->cells[x][y] = temp_cells[x][y];
 			if (temp_cells[x][y] == ALIVE)
-				this->alive.push_back(Vector2((float)x, (float)y));
+				this->alive.push_back(Vector2(x, y));
 		}
 	}
 
