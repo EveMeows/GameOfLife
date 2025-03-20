@@ -35,5 +35,5 @@ public:
 	void populate();
 	void handle(Vector2 current, Vector2 previous);
 
-	void draw_alive();
+	void draw_alive() const;
 };

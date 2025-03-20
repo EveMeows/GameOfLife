@@ -47,5 +47,8 @@
     <ClInclude Include="Sources\entities\cell.h">
       <Filter>Header Files\Entities</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\entities\item.h">
+      <Filter>Header Files\Entities</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

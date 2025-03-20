@@ -143,6 +143,7 @@
   <ItemGroup>
     <ClInclude Include="Sources\entities\cell.h" />
     <ClInclude Include="Sources\entities\cells.h" />
+    <ClInclude Include="Sources\entities\item.h" />
     <ClInclude Include="Sources\globals.h" />
     <ClInclude Include="Sources\entities\panel.h" />
   </ItemGroup>

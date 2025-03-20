@@ -88,7 +88,7 @@ void Cells::handle(Vector2 current, Vector2 previous)
 	}
 }
 
-void Cells::draw_alive()
+void Cells::draw_alive() const
 {
 	for (int x = 0; x < MAP_WIDTH; x++)
 	{
@@ -146,7 +146,6 @@ int Cells::get_neighbour_count(int x, int y)
 void Cells::advance_generation()
 {
 	uint8_t temp_cells[MAP_WIDTH][MAP_HEIGHT] = {};
-
 	for (int x = 0; x < MAP_WIDTH; x++)
 	{
 		for (int y = 0; y < MAP_HEIGHT; y++)

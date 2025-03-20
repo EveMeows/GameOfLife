@@ -13,7 +13,13 @@
 
 #include "game_data.h"
 
-static void draw_grid()
+// Disable terminal in release mode only
+#ifndef _DEBUG
+#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+#endif // !_DEBUG
+
+
+static void draw_grid(void)
 {
 	// Draw horizontal lines
 	for (int i = 0; i <= MAP_HEIGHT; i++)
@@ -24,7 +30,7 @@ static void draw_grid()
 		DrawLine(CELL_SIZE * i, 0, CELL_SIZE * i, MAP_HEIGHT_PX, GRID_COLOUR);
 }
 
-static Camera2D make_camera()
+static Camera2D make_camera(void)
 {
 	Camera2D game_camera = {};
 
@@ -50,6 +56,17 @@ static void handle_camera(Camera2D& game_camera)
 	// Camera dragging
 	if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
 		game_camera.target = Vector2Subtract(game_camera.target, Vector2Scale(GetMouseDelta(), 1.0f / game_camera.zoom));
+}
+
+static void handle_keys(std::shared_ptr<game_data> game)
+{
+	if (IsKeyDown(KEY_LEFT_CONTROL))
+	{
+		if (IsKeyPressed(KEY_G))
+		{
+			game->show_grid = !game->show_grid;
+		}
+	}
 }
 
 int main(void)
@@ -82,10 +99,11 @@ int main(void)
 
 	Vector2 pause_measurements = MeasureTextEx(font, "PAUSED", 20, 1);
 	Vector2 running_measurements = MeasureTextEx(font, "RUNNING", 20, 1);
-	KeyBindPanel panel = KeyBindPanel(
-		100, 100,
-		GetScreenWidth() - 200, GetScreenHeight() - 200
-	);
+
+	KeyBindPanel panel = KeyBindPanel(100, 100, GetScreenWidth() - 200, GetScreenHeight() - 200);
+	panel.push_string("SPACE -> Toggle pause");
+	panel.push_string("CTRL + G -> Toggle grid ");
+	panel.push_string("CTRL + K -> Show keybinds.");
 
 	while (!WindowShouldClose())
 	{
@@ -102,6 +120,7 @@ int main(void)
 		if (IsKeyPressed(KEY_SPACE))
 			data->paused = !data->paused;
 
+		handle_keys(data);
 		handle_camera(game_camera);
 
 		cells.handle(mouse_screen, previous_mouse);
@@ -133,8 +152,8 @@ int main(void)
 			{
 				cells.draw_alive();
 
-				if (data->show_grid)
-					draw_grid();
+				if (data->show_grid) draw_grid();
+				else DrawRectangleLines(0, 0, MAP_WIDTH_PX, MAP_HEIGHT_PX, GRID_COLOUR);
 			}
 			EndMode2D();
 
